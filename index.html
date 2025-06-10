@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 계산기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <input type="text" id="result" value="0" readonly>
+        </div>
+        <div class="buttons">
+            <button class="function">sin</button>
+            <button class="function">cos</button>
+            <button class="function">tan</button>
+            <button class="clear">C</button>
+            <button class="function">log</button>
+            <button class="function">ln</button>
+            <button class="operator">^</button>
+            <button class="function">sqrt</button>
+            <button class="number">7</button>
+            <button class="number">8</button>
+            <button class="number">9</button>
+            <button class="operator">/</button>
+            <button class="number">4</button>
+            <button class="number">5</button>
+            <button class="number">6</button>
+            <button class="operator">*</button>
+            <button class="number">1</button>
+            <button class="number">2</button>
+            <button class="number">3</button>
+            <button class="operator">-</button>
+            <button class="number">0</button>
+            <button class="decimal">.</button>
+            <button class="mode-toggle">F&lt;=&gt;D</button>
+            <button class="equals">=</button>
+            <button class="operator">+</button>
+
+            <!-- 통계 버튼들 -->
+            <button class="add-data">Add Data</button>
+            <button class="stat-function">Mean</button>
+            <button class="stat-function">StdDev</button>
+            <button class="stat-function">Var</button>
+            <button class="clear-data span-2">Clear Data</button>
+            /* clear-data 버튼이 2칸을 차지하도록 span-2 클래스를 임시로 추가합니다.
+               추후 style.css 에서 grid-column 속성을 설정할 것입니다. */
+        </div>
+
+        <div class="matrix-controls">
+            <input type="text" id="matrixAInput" placeholder="Matrix A: 1,2;3,4">
+            <button id="storeMatrixA" class="matrix-button">Store A</button>
+            <input type="text" id="matrixBInput" placeholder="Matrix B: 5,6;7,8">
+            <button id="storeMatrixB" class="matrix-button">Store B</button>
+            <button id="addMatrices" class="matrix-op-button">A + B</button>
+            <button id="subtractMatrices" class="matrix-op-button">A - B</button>
+            <button id="multiplyMatrices" class="matrix-op-button">A * B</button>
+        </div>
+
+        <div class="equation-solver-controls">
+            <h4>Linear Equation (ax + b = c)</h4>
+            <input type="text" id="coeffA" placeholder="a">
+            <input type="text" id="coeffB" placeholder="b">
+            <input type="text" id="coeffC" placeholder="c">
+            <button id="solveLinearEquation" class="solver-button">Solve for x</button>
+        </div>
+
+        <div class="history-controls">
+            <button id="toggleHistory" class="history-button">Toggle History</button>
+            <button id="clearHistory" class="history-button">Clear History</button>
+        </div>
+        <div id="historyDisplay" class="history-display-area" style="display: none;">
+            <!-- 계산 히스토리가 여기에 표시됩니다. -->
+        </div>
+
+        <div class="graphing-controls">
+            <h4>Graphing Calculator</h4>
+            <input type="text" id="functionInput" placeholder="e.g., Math.sin(x), x*x/10">
+            <button id="drawGraphButton" class="graphing-button">Draw Graph</button>
+            <canvas id="graphCanvas" width="400" height="300" style="border:1px solid #ccc; margin-top:10px;"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
