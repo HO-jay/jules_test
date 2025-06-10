@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator Tests</title>
+    <link rel="stylesheet" href="style.css"> <!-- 계산기 스타일도 로드 (버튼 요소 필요) -->
+    <style>
+        #testResults { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        .test-pass { color: green; }
+        .test-fail { color: red; }
+        .summary { font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Calculator Unit Tests</h1>
+
+    <!-- 계산기 UI를 숨겨서 로드 (script.js가 DOM 요소를 찾을 수 있도록) -->
+    <div class="calculator" style="display: none;">
+        <div class="display">
+            <input type="text" id="result" value="0" readonly>
+        </div>
+        <div class="buttons">
+            <div class="function-grid">
+                <button class="function">sin</button><button class="function">cos</button><button class="function">tan</button><button class="function">log</button>
+                <button class="function">ln</button><button class="function">sqrt</button><button class="operator function">^</button><button class="mode-toggle function">F&lt;=&gt;D</button>
+            </div>
+            <div class="keypad-grid">
+                <button class="clear grid-item-C">C</button><button class="operator grid-item-div">/</button><button class="operator grid-item-mul">*</button><button class="operator grid-item-sub">-</button>
+                <button class="number grid-item-7">7</button><button class="number grid-item-8">8</button><button class="number grid-item-9">9</button><button class="operator grid-item-add">+</button>
+                <button class="number grid-item-4">4</button><button class="number grid-item-5">5</button><button class="number grid-item-6">6</button>
+                <button class="number grid-item-1">1</button><button class="number grid-item-2">2</button><button class="number grid-item-3">3</button><button class="equals grid-item-eq">=</button>
+                <button class="number grid-item-0">0</button><button class="decimal grid-item-dot">.</button>
+            </div>
+        </div>
+        {/* Other controls can be added if their buttons need to be targeted by tests */}
+    </div>
+
+    <div id="testResults">
+        <h2>Test Results:</h2>
+        <div id="summary"></div>
+        <ul id="details"></ul>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="tests.js"></script>
+</body>
+</html>
