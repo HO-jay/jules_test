@@ -11,41 +11,51 @@
         <div class="display">
             <input type="text" id="result" value="0" readonly>
         </div>
-        <div class="buttons">
-            <button class="function">sin</button>
-            <button class="function">cos</button>
-            <button class="function">tan</button>
-            <button class="clear">C</button>
-            <button class="function">log</button>
-            <button class="function">ln</button>
-            <button class="operator">^</button>
-            <button class="function">sqrt</button>
-            <button class="number">7</button>
-            <button class="number">8</button>
-            <button class="number">9</button>
-            <button class="operator">/</button>
-            <button class="number">4</button>
-            <button class="number">5</button>
-            <button class="number">6</button>
-            <button class="operator">*</button>
-            <button class="number">1</button>
-            <button class="number">2</button>
-            <button class="number">3</button>
-            <button class="operator">-</button>
-            <button class="number">0</button>
-            <button class="decimal">.</button>
-            <button class="mode-toggle">F&lt;=&gt;D</button>
-            <button class="equals">=</button>
-            <button class="operator">+</button>
+        <div class="buttons"> <!-- 이 div는 이제 함수와 키패드를 감싸는 컨테이너 역할 -->
+            <div class="function-grid"> <!-- 함수 버튼 그룹 -->
+                <button class="function">sin</button>
+                <button class="function">cos</button>
+                <button class="function">tan</button>
+                <button class="function">log</button>
+                <button class="function">ln</button>
+                <button class="function">sqrt</button>
+                <button class="operator function">^</button> <!-- ^는 연산자이지만 함수 그룹에 배치 -->
+                <button class="mode-toggle function">F&lt;=&gt;D</button> <!-- F<=>D도 함수 그룹에 배치 -->
+            </div>
+            <div class="keypad-grid"> <!-- 숫자 및 기본 연산자 + C, = -->
+                <button class="clear grid-item-C">C</button>
+                <button class="operator grid-item-div">/</button>
+                <button class="operator grid-item-mul">*</button>
+                <button class="operator grid-item-sub">-</button>
 
-            <!-- 통계 버튼들 -->
-            <button class="add-data">Add Data</button>
-            <button class="stat-function">Mean</button>
-            <button class="stat-function">StdDev</button>
-            <button class="stat-function">Var</button>
-            <button class="clear-data span-2">Clear Data</button>
-            /* clear-data 버튼이 2칸을 차지하도록 span-2 클래스를 임시로 추가합니다.
-               추후 style.css 에서 grid-column 속성을 설정할 것입니다. */
+                <button class="number grid-item-7">7</button>
+                <button class="number grid-item-8">8</button>
+                <button class="number grid-item-9">9</button>
+                <button class="operator grid-item-add">+</button>
+
+                <button class="number grid-item-4">4</button>
+                <button class="number grid-item-5">5</button>
+                <button class="number grid-item-6">6</button>
+
+                <button class="number grid-item-1">1</button>
+                <button class="number grid-item-2">2</button>
+                <button class="number grid-item-3">3</button>
+                <button class="equals grid-item-eq">=</button>
+
+                <button class="number grid-item-0">0</button>
+                <button class="decimal grid-item-dot">.</button>
+            </div>
+        </div>
+
+        <div class="statistics-controls"> <!-- 통계 버튼들은 별도 섹션으로 -->
+            <h4>Statistics</h4>
+            <div class="stats-buttons-grid">
+                <button class="add-data">Add Data</button>
+                <button class="stat-function">Mean</button>
+                <button class="stat-function">StdDev</button>
+                <button class="stat-function">Var</button>
+                <button class="clear-data">Clear Data</button>
+            </div>
         </div>
 
         <div class="matrix-controls">

@@ -2,390 +2,323 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+    min-height: 100vh; /* 최소 높이를 화면 전체로 */
+    background-color: #e0e0e0; /* 배경색 약간 변경 */
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 가독성 좋은 폰트 */
+    padding: 20px; /* 페이지 전체에 여백 */
+    box-sizing: border-box;
 }
 
 .calculator {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #b0b0b0; /* 테두리 약간 어둡게 */
+    border-radius: 12px; /* 둥근 모서리 증가 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* 그림자 강화 */
     overflow: hidden;
+    width: 100%;
+    max-width: 420px; /* 계산기 최대 너비 조정 */
+    background-color: #f5f5f5; /* 계산기 기본 배경색 */
 }
 
 .display {
-    background-color: #222;
-    padding: 20px;
+    background-color: #1c1c1c; /* 더 어두운 배경 */
+    padding: 25px 20px; /* 패딩 조정 */
     text-align: right;
+    margin-bottom: 0; /* 버튼 그룹과 바로 붙도록 */
+    border-bottom: 1px solid #444; /* 디스플레이 하단 구분선 */
 }
 
 .display input {
     width: 100%;
-    background-color: #222;
+    background-color: transparent; /* 배경 투명 */
     color: white;
     border: none;
-    font-size: 2em;
+    font-size: 2.8em; /* 폰트 크기 증가 */
     text-align: right;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    box-sizing: border-box;
+    font-weight: 300; /* 얇은 폰트 */
 }
 
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    /* 버튼이 늘어남에 따라 전체적인 계산기 크기가 커질 수 있음 */
-}
-
+/* 기본 버튼 스타일 초기화 및 재정의 */
 button {
     background-color: #e0e0e0;
     border: none;
-    padding: 18px; /* Adjusted padding */
-    font-size: 1.3em; /* Adjusted font size */
+    padding: 15px; /* 패딩 조정 */
+    font-size: 1.1em; /* 기본 폰트 크기 조정 */
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    border-radius: 8px; /* 버튼 둥근 모서리 */
+    color: #333;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
 }
 
 button:hover {
-    background-color: #d0d0d0;
+    background-color: #d5d5d5;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.15);
 }
 
 button:active {
-    background-color: #c0c0c0;
+    background-color: #cccccc;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.clear {
-    grid-column: span 1;
-    background-color: #f44336;
+/* .buttons는 이제 함수와 키패드 컨테이너 */
+.buttons {
+    padding: 10px; /* 내부 그리드와 컨테이너 사이 여백 */
+    background-color: #dcdcdc; /* 버튼 영역 배경 */
+}
+
+.function-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 함수 버튼 4열 */
+    gap: 8px;
+    margin-bottom: 10px; /* 함수 그룹과 키패드 그룹 사이 여백 */
+}
+
+.function-grid button, /* 함수 그룹 내 버튼 공통 스타일 */
+.mode-toggle.function { /* F<=>D 버튼도 함수 그룹 스타일 적용 */
+    background-color: #b0bec5; /* Blue Grey Lighten-3 */
+    color: #263238; /* Blue Grey Darken-3 */
+    font-size: 0.9em;
+}
+.function-grid button:hover,
+.mode-toggle.function:hover {
+    background-color: #90a4ae; /* Blue Grey Lighten-2 */
+}
+.function-grid button.operator { /* ^ 버튼은 연산자 색상 유지 가능 */
+    background-color: #ffab40; /* Orange A200 */
     color: white;
 }
-
-.clear:hover {
-    background-color: #e53935;
+.function-grid button.operator:hover {
+    background-color: #ff9100; /* Orange A400 */
 }
 
-.operator {
-    background-color: #ff9800;
+
+.keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, auto); /* 행 높이는 내용에 맞게 */
+    gap: 8px; /* 버튼 간 간격 */
+}
+
+/* 키패드 버튼 기본 스타일 */
+.keypad-grid button {
+    padding: 20px 15px; /* 키패드 버튼 패딩 증가 */
+    font-size: 1.4em; /* 키패드 버튼 폰트 크기 증가 */
+}
+
+.keypad-grid .number, .keypad-grid .decimal {
+    background-color: #f5f5f5; /* 숫자 버튼 배경 */
+    color: #212121;
+}
+.keypad-grid .number:hover, .keypad-grid .decimal:hover {
+    background-color: #eeeeee;
+}
+
+.keypad-grid .operator {
+    background-color: #ffab40; /* Orange A200 */
     color: white;
 }
-
-.operator:hover {
-    background-color: #fb8c00;
+.keypad-grid .operator:hover {
+    background-color: #ff9100; /* Orange A400 */
 }
 
-.function { /* Style for new function buttons */
-    background-color: #607d8b; /* Blue Grey */
+.keypad-grid .clear {
+    background-color: #ef5350; /* Red Lighten-1 */
     color: white;
+    /* grid-column: span 1; 기본값 */
+}
+.keypad-grid .clear:hover {
+    background-color: #e53935; /* Red */
 }
 
-.function:hover {
-    background-color: #546e7a;
-}
-
-.mode-toggle { /* Style for F<=>D button */
-    background-color: #607d8b; /* Blue Grey, same as .function */
+.keypad-grid .equals {
+    background-color: #66bb6a; /* Green Lighten-1 */
     color: white;
+    grid-column: span 2; /* = 버튼은 2칸 차지 */
+}
+.keypad-grid .equals:hover {
+    background-color: #4caf50; /* Green */
 }
 
-.mode-toggle:hover {
-    background-color: #546e7a;
+/* grid-item-X 클래스를 사용한 정확한 위치 지정 (선택적, grid-area로 대체 가능) */
+.grid-item-C  { grid-area: 1 / 1; }
+/* +/- 와 % 버튼이 있다면 아래 주석 해제하고 grid-area 수정 */
+/* .grid-item-pm { grid-area: 1 / 2; }  */
+/* .grid-item-mod { grid-area: 1 / 3; } */
+.grid-item-div { grid-area: 1 / 2; } /* 현재 +/- % 버튼 없으므로 /가 2번째 칸으로 */
+.grid-item-mul { grid-area: 1 / 3; }
+.grid-item-sub { grid-area: 1 / 4; }
+
+.grid-item-7  { grid-area: 2 / 1; }
+.grid-item-8  { grid-area: 2 / 2; }
+.grid-item-9  { grid-area: 2 / 3; }
+.grid-item-add { grid-area: 2 / 4 / 4 / 5; } /* + 버튼은 2행 차지 (row-start / col-start / row-end / col-end) */
+
+.grid-item-4  { grid-area: 3 / 1; }
+.grid-item-5  { grid-area: 3 / 2; }
+.grid-item-6  { grid-area: 3 / 3; }
+
+.grid-item-1  { grid-area: 4 / 1; }
+.grid-item-2  { grid-area: 4 / 2; }
+.grid-item-3  { grid-area: 4 / 3; }
+.grid-item-eq { grid-area: 4 / 4 / 6 / 5; } /* = 버튼은 2행 차지 */
+
+.grid-item-0  { grid-area: 5 / 1 / 6 / 3; } /* 0 버튼은 2칸 차지 */
+.grid-item-dot { grid-area: 5 / 3 / 6 / 4; }
+
+
+/* --- 보조 기능 섹션 공통 스타일 --- */
+.statistics-controls, /* 통계 섹션도 공통 스타일 적용 */
+.matrix-controls,
+.equation-solver-controls,
+.history-controls,
+.graphing-controls,
+.history-display-area {
+    margin-top: 15px;
+    border-top: 2px solid #c0c0c0; /* 구분선 색상 변경 */
+    padding-top: 15px;
 }
 
-/* 통계 버튼 스타일 */
-.stat-function, .add-data, .clear-data {
-    background-color: #78909c; /* Blue Grey Lighten-1 */
-    color: white;
+/* 각 섹션 제목 공통 스타일 */
+.statistics-controls h4, /* 통계 섹션 제목 */
+.matrix-controls h4,
+.equation-solver-controls h4,
+.graphing-controls h4 {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px; /* 제목과 내용 간 여백 증가 */
+    font-size: 1.0em; /* 폰트 크기 조정 */
+    color: #333;
+    border-bottom: 1px solid #d0d0d0;
+    padding-bottom: 8px; /* 패딩 조정 */
+    font-weight: 600; /* 제목 폰트 두께 */
 }
 
-.stat-function:hover, .add-data:hover, .clear-data:hover {
-    background-color: #607d8b; /* Blue Grey */
+/* 통계 버튼 섹션 */
+.statistics-controls {
+    padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+    background-color: #e8f5e9; /* Green Lighten-5 */
+}
+.stats-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* 반응형 그리드 */
+    gap: 8px;
+}
+.stats-buttons-grid button { /* 통계 버튼 공통 스타일 */
+    background-color: #a5d6a7; /* Green Lighten-3 */
+    color: #1b5e20; /* Green Darken-4 */
+    font-size: 0.9em;
+}
+.stats-buttons-grid button:hover {
+    background-color: #81c784; /* Green Lighten-2 */
+}
+.stats-buttons-grid .clear-data { /* 통계 데이터 지우기 버튼 */
+    background-color: #ef9a9a; /* Red Lighten-3 */
+    color: #c62828; /* Red Darken-3 */
+    /* grid-column: span X; 필요시 너비 조정 */
+}
+.stats-buttons-grid .clear-data:hover {
+    background-color: #e57373; /* Red Lighten-2 */
 }
 
-.clear-data {
-    grid-column: span 2; /* clear-data 버튼이 2칸 차지 */
-    background-color: #ef5350; /* 약간 다른 빨간색 계열 */
-}
-
-.clear-data:hover {
-    background-color: #e53935;
-}
-
-.equals {
-    /* grid-column: span 2; */ /* Removed to make it same size as other buttons */
-    background-color: #4caf50;
-    color: white;
-}
-
-.equals:hover {
-    background-color: #43a047;
-}
-
-.number, .decimal {
-    background-color: #f9f9f9;
-}
-
-.number:hover, .decimal:hover {
-    background-color: #efefef;
-}
 
 /* 행렬 컨트롤 스타일 */
 .matrix-controls {
-    padding: 10px;
-    background-color: #f5f5f5; /* 약간 다른 배경색 */
+    padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+    background-color: #eceff1;
     display: grid;
-    grid-template-columns: 1fr auto; /* 입력 필드가 남은 공간 차지, 버튼은 내용만큼 */
+    grid-template-columns: 1fr auto;
     gap: 8px;
     align-items: center;
 }
+.matrix-controls input[type="text"] { /* 스타일 유지 */
+    padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em;
+    width: 100%; box-sizing: border-box;
+}
+.matrix-button, .matrix-op-button { /* 스타일 유지 또는 약간 조정 */
+    padding: 10px 15px; font-size: 0.9em; color: white;
+    border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s;
+}
+.matrix-button { background-color: #78909c; } /* Blue Grey Lighten-1 */
+.matrix-button:hover { background-color: #607d8b; }
+.matrix-op-button { background-color: #009688; } /* Teal */
+.matrix-op-button:hover { background-color: #00796b; }
+#matrixAInput, #storeMatrixA, #matrixBInput, #storeMatrixB,
+#addMatrices, #subtractMatrices, #multiplyMatrices { /* grid-column 설정 유지 */
+    /* 기존 grid-column 설정 유지 */
+}
+#addMatrices { grid-column: 1 / 2; }
+#subtractMatrices { grid-column: 2 / 3; }
+#multiplyMatrices { grid-column: 1 / 2; margin-top: 5px; } /* 다음 줄로 확실히 넘기기 위해 margin-top 추가 */
 
-.matrix-controls input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9em;
-    width: 100%; /* 부모 그리드 컬럼에 꽉 차도록 */
-    box-sizing: border-box;
-}
-
-.matrix-button, .matrix-op-button {
-    padding: 10px 15px;
-    font-size: 0.9em; /* 기존 버튼보다 약간 작게 */
-    background-color: #546e7a; /* 어두운 청회색 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.matrix-button:hover, .matrix-op-button:hover {
-    background-color: #455a64; /* 더 어둡게 */
-}
-
-/* 연산 버튼은 다른 색으로 구분 가능 */
-.matrix-op-button {
-    background-color: #00796b; /* Teal */
-}
-
-.matrix-op-button:hover {
-    background-color: #00695c;
-}
-
-/* 특정 버튼에 대한 그리드 컬럼 설정 */
-/* 예를 들어, A 입력과 Store A 버튼을 한 줄에, B 입력과 Store B 버튼을 다음 줄에 배치 */
-#matrixAInput {
-    grid-column: 1 / 2;
-}
-#storeMatrixA {
-    grid-column: 2 / 3;
-}
-#matrixBInput {
-    grid-column: 1 / 2;
-}
-#storeMatrixB {
-    grid-column: 2 / 3;
-}
-
-/* 연산 버튼들은 한 줄에 여러 개 배치 */
-/* 이를 위해 matrix-controls의 grid-template-columns 수정 필요 가능성 있음 */
-/* 우선은 각 버튼이 한 셀을 차지하도록 두고, 필요시 조정 */
-/* 만약 연산 버튼들을 한 줄에 모으려면, 추가적인 div로 감싸거나 grid-template-columns를 더 세분화해야 함 */
-/* 여기서는 각 버튼이 새 줄을 차지하지 않도록 grid-column을 명시적으로 설정해볼 수 있음 */
-/* 하지만 더 간단하게는, 연산 버튼들을 별도의 div로 묶는 것이 레이아웃 관리에 용이 */
-/* 현재는 각 버튼이 자동으로 다음 셀/행으로 넘어감.
-   matrix-controls를 display: flex; flex-wrap: wrap; 으로 하고 버튼 크기 조절도 방법.
-   여기서는 grid를 유지하고, 연산 버튼들이 입력 필드 아래에 오도록 함.
-   A 입력 | Store A
-   B 입력 | Store B
-   A+B    | A-B
-   A*B    | (빈칸 또는 다른 버튼)
-   이렇게 하려면 matrix-controls의 grid-template-columns: 1fr 1fr; 와 유사하게 설정 필요
-*/
-/* 현재 설정(1fr auto)에서는 연산 버튼들이 입력 필드와 같은 열에 배치되려 하므로,
-   A+B, A-B, A*B 버튼들이 Store B 버튼 다음에 순차적으로 배치될 것입니다.
-   이것이 의도한 바가 아니라면, HTML 구조 변경 또는 CSS Grid 속성 추가 조정 필요.
-   예를 들어, 연산 버튼들을 위한 새 row를 명시적으로 만들거나,
-   matrix-controls의 grid-template-columns 를 변경 (e.g. repeat(3, 1fr) for op buttons in new row)
-*/
-/* 현재 CSS로는 아래와 같이 배치됩니다:
-   MatrixAInput | StoreA
-   MatrixBInput | StoreB
-   AddMatrices  | (다음 요소, 없으면 빈칸)
-   SubtractMatrices | (다음 요소)
-   MultiplyMatrices | (다음 요소)
-   이렇게 되면 연산 버튼들이 너무 길게 늘어질 수 있습니다.
-   연산 버튼들을 한 줄에 묶기 위해 grid-column을 조정합니다.
-*/
-#addMatrices {
-    grid-column: 1 / 2;
-}
-#subtractMatrices {
-    grid-column: 2 / 3;
-}
-#multiplyMatrices {
-    /* 다음 줄로 넘어가거나, grid-template-columns: repeat(3, 1fr) 등을 고려해야 함 */
-    /* 현재 1fr auto 설정이므로, 이 버튼은 새 줄의 첫번째 컬럼에 올 것임. */
-    /* 모든 연산 버튼을 한 줄에 넣기 위해 HTML 구조를 변경하거나,
-       matrix-controls의 template을 변경하는 것이 좋습니다.
-       예: matrix-controls { grid-template-areas: "inA btnA" "inB btnB" "op1 op2 op3"; }
-       우선은 간단하게 유지하고, 필요시 복잡한 레이아웃 적용.
-       현재 상태에서 Multiply는 새 줄에 나올 것입니다.
-       A+B, A-B를 같은 줄에 두려면, #subtractMatrices의 grid-column을 2/3로 하고,
-       #addMatrices는 1/2로 합니다.
-       그리고 #multiplyMatrices는 다음 줄 1/2.
-    */
-     grid-column: 1 / 2; /* 새 줄의 첫번째 */
-}
 
 /* 방정식 풀이 컨트롤 스타일 */
 .equation-solver-controls {
-    padding: 10px;
-    background-color: #e8eaf6; /* Indigo lighten-5, 다른 섹션과 구분 */
+    padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+    background-color: #f3e5f5;
     display: grid;
-    /* grid-template-columns: repeat(3, 1fr) auto; /* 계수 입력 3개, 버튼 1개 */
-       grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* 반응형으로 여러 열 */
-    */
-    grid-template-columns: repeat(3, minmax(60px, 1fr)); /* 3개의 계수 필드 */
+    grid-template-columns: repeat(3, minmax(60px, 1fr));
     gap: 8px;
     align-items: center;
 }
-
-.equation-solver-controls h4 {
-    grid-column: 1 / -1; /* 제목은 전체 너비 차지 */
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1em;
-    color: #3f51b5; /* Indigo */
+.equation-solver-controls input[type="text"] { /* 스타일 유지 */
+    padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em;
+    width: 100%; box-sizing: border-box; text-align: center;
 }
-
-.equation-solver-controls input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9em;
-    width: 100%; /* 부모 그리드 컬럼에 꽉 차도록 */
-    box-sizing: border-box;
-    text-align: center; /* 계수 입력은 중앙 정렬 */
+.solver-button { /* 스타일 유지 또는 약간 조정 */
+    grid-column: 1 / -1; padding: 10px 15px; font-size: 0.9em;
+    background-color: #7e57c2; /* Deep Purple Lighten-1 */
+    color: white; border: none; border-radius: 4px; cursor: pointer;
+    transition: background-color 0.2s; margin-top: 5px;
 }
+.solver-button:hover { background-color: #673ab7; } /* Deep Purple */
 
-.solver-button {
-    grid-column: 1 / -1; /* 버튼은 전체 너비 차지 */
-    padding: 10px 15px;
-    font-size: 0.9em;
-    background-color: #3f51b5; /* Indigo */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 5px; /* 입력 필드와 버튼 사이 간격 */
-}
-
-.solver-button:hover {
-    background-color: #303f9f; /* Indigo Darken-1 */
-}
 
 /* 히스토리 컨트롤 및 표시 영역 스타일 */
 .history-controls {
-    padding: 10px;
-    background-color: #f0f4c3; /* Lime lighten-5, 다른 섹션과 구분 */
-    display: flex; /* 버튼들을 가로로 나열 */
-    justify-content: space-around; /* 버튼들 사이에 공간 배분 */
-    gap: 8px;
+    padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+    background-color: #e8f5e9;
+    display: flex; justify-content: space-around; gap: 8px;
 }
+.history-button { /* 스타일 약간 조정 */
+    padding: 8px 12px; font-size: 0.9em; /* 폰트 크기 통일 */
+    background-color: #8bc34a; /* Light Green */
+    color: white; border: none; border-radius: 4px; cursor: pointer;
+    transition: background-color 0.2s; flex-grow: 1;
+}
+.history-button:hover { background-color: #7cb342; }
+.history-display-area { /* 스타일 유지 또는 약간 조정 */
+    max-height: 150px; overflow-y: auto; border: 1px solid #a5d6a7;
+    padding: 10px; margin-left: 10px; margin-right: 10px; margin-bottom: 10px;
+    background-color: #ffffff; border-radius: 4px;
+    font-size: 0.9em; line-height: 1.4;
+}
+.history-item { /* 스타일 유지 */
+    padding: 5px 0; border-bottom: 1px dashed #dcedc8; word-wrap: break-word;
+}
+.history-item:last-child { border-bottom: none; }
 
-.history-button {
-    padding: 8px 12px; /* 다른 기능 버튼보다 약간 작게 */
-    font-size: 0.85em;
-    background-color: #7cb342; /* Light Green darken-1 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    flex-grow: 1; /* 버튼들이 가능한 공간을 채우도록 */
-}
-
-.history-button:hover {
-    background-color: #689f38; /* Light Green darken-2 */
-}
-
-.history-display-area {
-    max-height: 150px; /* 히스토리 영역의 최대 높이 */
-    overflow-y: auto; /* 내용이 많으면 스크롤 */
-    border: 1px solid #c5e1a5; /* Light Green lighten-3 */
-    padding: 10px;
-    margin: 0 10px 10px 10px; /* 위 컨트롤과의 간격 및 좌우 패딩 */
-    background-color: white;
-    border-radius: 4px;
-    font-size: 0.9em;
-    line-height: 1.4;
-}
-
-.history-item {
-    padding: 5px 0;
-    border-bottom: 1px dashed #dcedc8; /* Light Green lighten-4 */
-    word-wrap: break-word; /* 긴 수식이 넘치지 않도록 */
-}
-
-.history-item:last-child {
-    border-bottom: none; /* 마지막 항목은 하단 테두리 없음 */
-}
 
 /* 그래프 컨트롤 및 캔버스 스타일 */
 .graphing-controls {
-    padding: 10px;
-    background-color: #e1f5fe; /* Light Blue lighten-5 */
-    display: grid;
-    grid-template-columns: 1fr; /* 기본적으로 한 열 차지 */
-    gap: 8px;
-    align-items: center;
+    padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+    background-color: #e0f7fa;
+    display: grid; grid-template-columns: 1fr; gap: 8px; align-items: center;
 }
-
-.graphing-controls h4 {
-    grid-column: 1 / -1; /* 제목은 전체 너비 차지 */
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1em;
-    color: #0277bd; /* Light Blue darken-3 */
+.graphing-controls input[type="text"] { /* 스타일 유지 */
+    padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+    font-size: 0.9em; width: 100%; box-sizing: border-box;
 }
-
-.graphing-controls input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9em;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.graphing-button {
-    padding: 10px 15px;
-    font-size: 0.9em;
-    background-color: #0288d1; /* Light Blue darken-1 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.graphing-button { /* 스타일 약간 조정 */
+    padding: 10px 15px; font-size: 0.9em;
+    background-color: #26c6da; /* Cyan Lighten-1 */
+    color: white; border: none; border-radius: 4px; cursor: pointer;
     transition: background-color 0.2s;
 }
-
-.graphing-button:hover {
-    background-color: #0277bd; /* Light Blue darken-3 */
-}
-
-#graphCanvas {
-    /* HTML에서 width/height가 설정되었으므로, 여기서는 주로 외형적 스타일 */
-    /* 너비를 100%로 설정하여 부모 컨테이너에 맞춤 */
-    width: 100%;
-    max-width: 400px; /* 최대 너비 제한 (HTML에서 설정한 값과 일치시키거나 조절) */
-    height: auto; /* 너비에 따른 비율 유지 또는 고정 높이 (HTML의 height 따름) */
-    aspect-ratio: 400 / 300; /* HTML의 width/height 비율 유지 */
-    display: block; /* margin auto 적용을 위해 */
-    margin-left: auto;
-    margin-right: auto;
-    /* border는 HTML 인라인 스타일로 이미 적용됨 */
+.graphing-button:hover { background-color: #00bcd4; } /* Cyan */
+#graphCanvas { /* 스타일 유지 */
+    width: 100%; max-width: 400px; height: auto; aspect-ratio: 400 / 300;
+    display: block; margin-left: auto; margin-right: auto;
 }
