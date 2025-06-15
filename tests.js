@@ -1,6 +1,9 @@
 // tests.js
 document.addEventListener('DOMContentLoaded', () => {
-    const display = document.getElementById('result');
+    const mainDisplay = document.getElementById('result'); // 주 결과 화면
+    const expressionDisplay = document.getElementById('expressionDisplay'); // 수식 표시줄
+    const historyDisplayArea = document.getElementById('historyDisplay'); // 히스토리 표시 영역
+
     const testSummaryDiv = document.getElementById('summary');
     const testDetailsUl = document.getElementById('details');
 
@@ -30,30 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function assertAlmostEquals(expected, actual, testName, tolerance = 0.00001) {
-        if (Math.abs(expected - parseFloat(actual)) < tolerance) {
-            logResult(`${testName}: Expected around "${expected}", Got "${actual}"`, true);
+        const actualNum = parseFloat(actual);
+        if (Math.abs(expected - actualNum) < tolerance) {
+            logResult(`${testName}: Expected around "${expected}", Got "${actualNum}"`, true);
         } else {
-            logResult(`${testName}: Expected around "${expected}", Got "${actual}" (Diff: ${Math.abs(expected - parseFloat(actual))})`, false);
+            logResult(`${testName}: Expected around "${expected}", Got "${actualNum}" (Diff: ${Math.abs(expected - actualNum)})`, false);
         }
     }
 
     function getButton(textOrSelector) {
         let button;
-        // 먼저 텍스트로 버튼을 찾습니다.
-        const buttons = Array.from(document.querySelectorAll('.buttons button, .matrix-button, .solver-button, .history-button, .graphing-button'));
-        button = buttons.find(btn => btn.textContent.trim() === textOrSelector);
+        // .buttons 내부의 버튼들 (기존 계산기 버튼)
+        const calcButtons = Array.from(document.querySelectorAll('.buttons button'));
+        button = calcButtons.find(btn => btn.textContent.trim() === textOrSelector);
 
-        if (!button) {
-            // 텍스트로 못 찾으면 셀렉터로 시도
+        if (!button) { // ID로 다른 버튼들 검색
             try {
-                button = document.querySelector(textOrSelector);
-            } catch (e) {
-                // 유효하지 않은 셀렉터일 수 있음
-            }
+                button = document.querySelector(textOrSelector) || document.getElementById(textOrSelector);
+            } catch (e) { /* ignore */ }
         }
         return button;
     }
-
 
     function simulateClick(textOrSelector) {
         const button = getButton(textOrSelector);
@@ -62,145 +62,165 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const errorMsg = `Button "${textOrSelector}" not found for simulation.`;
             logResult(errorMsg, false);
-            // throw new Error(errorMsg); // 테스트 중단 대신 실패로 기록
         }
+    }
+
+    // Helper functions to get display values
+    function getMainDisplayValue() {
+        return mainDisplay.value;
+    }
+
+    function getExpressionDisplayValue() {
+        return expressionDisplay.textContent;
+    }
+
+    function isElementVisible(element) {
+        if (!element) return false;
+        return element.style.display !== 'none' && element.getClientRects().length > 0;
     }
 
     function resetCalculatorState() {
-        // 'C' 버튼은 .clear 클래스를 가짐
-        const clearButton = document.querySelector('.clear');
-        if (clearButton) {
-            clearButton.click();
-        } else {
-            console.error("Clear button not found for resetCalculatorState");
-        }
-        // 추가적으로 script.js 내부 상태 변수 직접 초기화 (필요시)
-        // currentInput = '0'; currentInternalValue = null; ... (script.js와 동일한 변수명 사용)
-        // 하지만 버튼 클릭으로 대부분 해결되어야 함.
+        simulateClick('C'); // 'C' 버튼 클릭으로 대부분의 상태 초기화
+        // expressionDisplay는 C 버튼에 의해 script.js에서 초기화됨
+        // 히스토리 초기화는 별도 테스트에서 다루거나, 필요시 여기서 clearHistory 버튼 클릭
     }
 
     // --- Test Cases ---
-
-    function testAddition() {
-        resetCalculatorState();
-        simulateClick('3');
-        simulateClick('+');
-        simulateClick('5');
-        simulateClick('=');
-        assertEquals('8', display.value, 'Addition (3+5=8)');
+    function testAddition() { /* 기존 */
+        resetCalculatorState(); simulateClick('3'); simulateClick('+'); simulateClick('5'); simulateClick('=');
+        assertEquals('8', getMainDisplayValue(), 'Addition (3+5=8)');
     }
-
-    function testSubtraction() {
-        resetCalculatorState();
-        simulateClick('1');
-        simulateClick('0');
+    function testSubtraction() { /* 기존 */
+        resetCalculatorState(); simulateClick('1'); simulateClick('0'); simulateClick('-'); simulateClick('4'); simulateClick('=');
+        assertEquals('6', getMainDisplayValue(), 'Subtraction (10-4=6)');
+    }
+    function testMultiplication() { /* 기존 */
+        resetCalculatorState(); simulateClick('7'); simulateClick('*'); simulateClick('6'); simulateClick('=');
+        assertEquals('42', getMainDisplayValue(), 'Multiplication (7*6=42)');
+    }
+    function testDivision() { /* 기존 */
+        resetCalculatorState(); simulateClick('1'); simulateClick('2'); simulateClick('/'); simulateClick('3'); simulateClick('=');
+        assertEquals('4', getMainDisplayValue(), 'Division (12/3=4)');
+    }
+    function testDivisionByZero() { /* 기존 */
+        resetCalculatorState(); simulateClick('5'); simulateClick('/'); simulateClick('0'); simulateClick('=');
+        assertEquals('Error', getMainDisplayValue(), 'Division by Zero (5/0=Error)');
+    }
+    function testOrderOfOperations() { /* 기존 */
+        resetCalculatorState(); simulateClick('2'); simulateClick('+'); simulateClick('3'); simulateClick('*'); simulateClick('4'); simulateClick('=');
+        assertEquals('20', getMainDisplayValue(), 'Order of Operations (Sequential: 2+3*4=20)');
+    }
+    function testDecimalInput() { /* 기존 */
+        resetCalculatorState(); simulateClick('1'); simulateClick('.'); simulateClick('2'); simulateClick('+'); simulateClick('3'); simulateClick('.'); simulateClick('4'); simulateClick('=');
+        assertEquals('4.6', getMainDisplayValue(), 'Decimal Input (1.2+3.4=4.6)');
+    }
+    function testClearButton() { /* 기존 + expressionDisplay 확인 */
+        resetCalculatorState(); simulateClick('1'); simulateClick('2'); simulateClick('+'); simulateClick('3');
+        assertEquals('12 + 3', getExpressionDisplayValue(), 'Clear Button - Expression before C');
+        simulateClick('C');
+        assertEquals('0', getMainDisplayValue(), 'Clear Button (Display: 12+3 -> C -> 0)');
+        assertEquals('', getExpressionDisplayValue(), 'Clear Button (Expression: 12+3 -> C -> Cleared)');
+    }
+    function testFunctionSin() { /* 기존 */
+        resetCalculatorState(); simulateClick('3'); simulateClick('0'); simulateClick('sin');
+        assertAlmostEquals(0.5, getMainDisplayValue(), 'Sine Function (sin(30)=0.5)');
+        assertEquals('sin(30)', getExpressionDisplayValue(), 'Sine Function - Expression Display');
+    }
+    function testFractionInputAndToggle() { /* 기존 */
+        resetCalculatorState(); simulateClick('2'); simulateClick('/'); simulateClick('4');
+        simulateClick('F<=>D');
+        assertEquals('1/2', getMainDisplayValue(), 'Fraction Input and Toggle (2/4 -> F<=>D -> 1/2)');
+        assertEquals('1/2', getExpressionDisplayValue(), 'Fraction Input - Expression Display after F<=>D'); // F<=>D 누르면 수식창도 현재 값 반영
+        simulateClick('F<=>D');
+        assertAlmostEquals(0.5, getMainDisplayValue(), 'Fraction Toggle to Decimal (1/2 -> F<=>D -> 0.5)');
+        assertEquals('0.5', getExpressionDisplayValue(), 'Fraction Toggle to Decimal - Expression Display');
+    }
+    function testChainedOperations() { /* 기존 */
+        resetCalculatorState(); simulateClick('1'); simulateClick('0'); simulateClick('+'); simulateClick('5');
         simulateClick('-');
-        simulateClick('4');
-        simulateClick('=');
-        assertEquals('6', display.value, 'Subtraction (10-4=6)');
+        assertEquals('15 - ', getExpressionDisplayValue(), 'Chained Ops - Expr after 10+5-');
+        simulateClick('3'); simulateClick('=');
+        assertEquals('12', getMainDisplayValue(), 'Chained Operations (10+5-3=12)');
+        assertEquals('15 - 3 = 12', getExpressionDisplayValue(), 'Chained Ops - Final Expression');
     }
 
-    function testMultiplication() {
+    // --- New Test Cases ---
+    function testPiButton() {
         resetCalculatorState();
-        simulateClick('7');
-        simulateClick('*');
-        simulateClick('6');
-        simulateClick('=');
-        assertEquals('42', display.value, 'Multiplication (7*6=42)');
+        simulateClick('π'); // 'π' 버튼의 textContent 또는 ID로 클릭
+        assertEquals(String(Math.PI), getMainDisplayValue(), "Pi button should display PI value on main display");
+        assertEquals('π', getExpressionDisplayValue(), "Pi button should show π in expression display");
     }
 
-    function testDivision() {
+    function testPiCalculation() {
+        resetCalculatorState();
+        simulateClick('π');
+        simulateClick('+');
+        simulateClick('1');
+        simulateClick('=');
+        assertAlmostEquals(Math.PI + 1, getMainDisplayValue(), "PI + 1 calculation");
+        assertEquals('π + 1 = ' + String(Math.PI + 1), getExpressionDisplayValue(), "PI + 1 - Final Expression");
+    }
+
+    function testPiInFunction() {
+        resetCalculatorState();
+        simulateClick('π');
+        simulateClick('cos'); // cos(Math.PI degrees)
+        assertAlmostEquals(Math.cos(Math.PI * Math.PI / 180), getMainDisplayValue(), "cos(PI degrees)");
+        assertEquals(`cos(π)`, getExpressionDisplayValue(), "cos(PI) - Expression Display");
+    }
+
+    function testHistoryDisplayToggle() {
+        resetCalculatorState();
+        // 히스토리 버튼 ID로 시뮬레이션
+        const toggleBtn = document.getElementById('toggleHistory');
+        if (!toggleBtn) { logResult("History toggle button not found", false); return; }
+
+        assertEquals(false, isElementVisible(historyDisplayArea), "History should be hidden initially or after reset");
+
+        toggleBtn.click(); // 첫번째 클릭: 보이기
+        assertEquals(true, isElementVisible(historyDisplayArea), "History should be visible after first toggle");
+
+        toggleBtn.click(); // 두번째 클릭: 숨기기
+        assertEquals(false, isElementVisible(historyDisplayArea), "History should be hidden after second toggle");
+    }
+
+    function testExpressionDisplayUpdate() {
         resetCalculatorState();
         simulateClick('1');
+        assertEquals('1', getExpressionDisplayValue(), "Expression display for 1");
+        simulateClick('+');
+        assertEquals('1 + ', getExpressionDisplayValue(), "Expression display for 1+"); // currentInput이 '0'이므로 생략됨
         simulateClick('2');
+        assertEquals('1 + 2', getExpressionDisplayValue(), "Expression display for 1+2");
+        simulateClick('-');
+        assertEquals('3 - ', getExpressionDisplayValue(), "Expression display for 1+2- (evaluates to 3-)");
+        simulateClick('π');
+        assertEquals('3 - π', getExpressionDisplayValue(), "Expression display for 1+2-π (evaluates to 3-π)");
+    }
+
+    function testExpressionDisplayClearOnEquals() {
+        resetCalculatorState();
+        simulateClick('1');
+        simulateClick('+');
+        simulateClick('2');
+        simulateClick('=');
+        // 현재 script.js는 handleEquals에서 expressionDisplay.textContent = expressionForHistory ? `${expressionForHistory} = ${formatValue(result, isFractionMode, true)}` : formatValue(result, isFractionMode, true);
+        // 로 설정하므로, 비워지지 않고 최종 결과를 표시함.
+        assertEquals('1 + 2 = 3', getExpressionDisplayValue(), "Expression display shows final equation on equals");
+    }
+
+    function testExpressionDisplayFormatting() {
+        resetCalculatorState();
+        simulateClick('1');
         simulateClick('/');
-        simulateClick('3');
-        simulateClick('=');
-        assertEquals('4', display.value, 'Division (12/3=4)');
-    }
-
-    function testDivisionByZero() {
-        resetCalculatorState();
-        simulateClick('5');
-        simulateClick('/');
-        simulateClick('0');
-        simulateClick('=');
-        assertEquals('Error', display.value, 'Division by Zero (5/0=Error)');
-    }
-
-    function testOrderOfOperations() {
-        resetCalculatorState();
-        // 현재 계산기는 순차 계산을 하므로 2 + 3 * 4는 (2+3)*4 = 20
-        simulateClick('2');
+        simulateClick('2'); // currentInput = "1/2"
+        // 이때 expressionDisplay는 currentInput인 "1/2" 또는 parse된 {num:1, den:2}의 포맷팅된 값
+        assertEquals('1/2', getExpressionDisplayValue(), "Expression display for 1/2");
         simulateClick('+');
-        simulateClick('3');
-        simulateClick('*');
-        simulateClick('4');
-        simulateClick('=');
-        assertEquals('20', display.value, 'Order of Operations (Sequential: 2+3*4=20)');
-        // 만약 우선순위가 구현된다면 기대값은 14
-    }
-
-    function testDecimalInput() {
-        resetCalculatorState();
-        simulateClick('1');
-        simulateClick('.');
-        simulateClick('2');
-        simulateClick('+');
-        simulateClick('3');
-        simulateClick('.');
-        simulateClick('4');
-        simulateClick('=');
-        assertEquals('4.6', display.value, 'Decimal Input (1.2+3.4=4.6)');
-    }
-
-    function testClearButton() {
-        resetCalculatorState(); // 시작 시 초기화
-        simulateClick('1');
-        simulateClick('2');
-        simulateClick('3');
-        simulateClick('C'); // .clear 클래스를 가진 버튼
-        assertEquals('0', display.value, 'Clear Button (123 -> C -> 0)');
-
-        resetCalculatorState();
-        simulateClick('1');
-        simulateClick('+');
-        simulateClick('2');
-        simulateClick('C'); // 연산자 입력 후 C
-        assertEquals('0', display.value, 'Clear Button (1+2 -> C -> 0)');
-        // C를 누르면 previousInput, operator 등도 초기화되어야 함 (script.js 로직 확인)
-    }
-
-    function testFunctionSin() {
-        resetCalculatorState();
-        simulateClick('3');
-        simulateClick('0'); // 30
-        simulateClick('sin');
-        assertAlmostEquals(0.5, display.value, 'Sine Function (sin(30)=0.5)');
-    }
-
-    function testFractionInputAndToggle() {
-        resetCalculatorState();
-        simulateClick('2');
-        simulateClick('/'); // isEnteringDenominator = true, currentInput = "2/0"
-        simulateClick('4'); // currentInput = "2/4"
-        simulateClick('F<=>D'); // isFractionMode = true, currentInternalValue = {num:1, den:2}
-        assertEquals('1/2', display.value, 'Fraction Input and Toggle (2/4 -> F<=>D -> 1/2)');
-
-        simulateClick('F<=>D'); // isFractionMode = false
-        assertAlmostEquals(0.5, display.value, 'Fraction Toggle to Decimal (1/2 -> F<=>D -> 0.5)');
-    }
-
-    function testChainedOperations() {
-        resetCalculatorState();
-        simulateClick('1');
-        simulateClick('0');
-        simulateClick('+');
-        simulateClick('5');
-        simulateClick('-'); // Should calculate 10+5=15, then prepare for 15 - ?
-        simulateClick('3');
-        simulateClick('=');
-        assertEquals('12', display.value, 'Chained Operations (10+5-3=12)');
+        assertEquals('1/2 + ', getExpressionDisplayValue(), "Expression display for 1/2 +");
+        simulateClick('π');
+        assertEquals('1/2 + π', getExpressionDisplayValue(), "Expression display for 1/2 + π");
     }
 
 
@@ -208,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function runAllTests() {
         console.log("Starting Calculator Tests...");
 
+        // 기존 테스트
         testAddition();
         testSubtraction();
         testMultiplication();
@@ -219,7 +240,15 @@ document.addEventListener('DOMContentLoaded', () => {
         testFunctionSin();
         testFractionInputAndToggle();
         testChainedOperations();
-        // 여기에 더 많은 테스트 추가
+
+        // 신규 테스트
+        testPiButton();
+        testPiCalculation();
+        testPiInFunction();
+        testHistoryDisplayToggle();
+        testExpressionDisplayUpdate();
+        testExpressionDisplayClearOnEquals();
+        testExpressionDisplayFormatting();
 
         console.log("Calculator Tests Finished.");
         testSummaryDiv.textContent = `Tests Completed: ${testsPassed} Passed, ${testsFailed} Failed.`;
@@ -230,5 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // test.html에 계산기 UI가 모두 로드된 후 테스트 실행
+    // script.js가 DOMContentLoaded를 기다리므로, 여기서도 동일하게 처리하거나 약간의 지연을 줄 수 있음.
+    // 현재 script.js와 tests.js 모두 DOMContentLoaded를 기다리므로, script.js가 먼저 실행되도록 보장 필요.
+    // test.html에서 script.js를 tests.js보다 먼저 로드하면 일반적으로 script.js의 DOMContentLoaded가 먼저 실행됨.
     runAllTests();
 });

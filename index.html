@@ -9,6 +9,7 @@
 <body>
     <div class="calculator">
         <div class="display">
+            <div id="expressionDisplay" class="expression-display"></div>
             <input type="text" id="result" value="0" readonly>
         </div>
         <div class="buttons"> <!-- 이 div는 이제 함수와 키패드를 감싸는 컨테이너 역할 -->
@@ -21,6 +22,7 @@
                 <button class="function">sqrt</button>
                 <button class="operator function">^</button> <!-- ^는 연산자이지만 함수 그룹에 배치 -->
                 <button class="mode-toggle function">F&lt;=&gt;D</button> <!-- F<=>D도 함수 그룹에 배치 -->
+                <button id="piButton" class="function">π</button> <!-- π 버튼 추가 -->
             </div>
             <div class="keypad-grid"> <!-- 숫자 및 기본 연산자 + C, = -->
                 <button class="clear grid-item-C">C</button>
